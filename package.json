@@ -1,0 +1,27 @@
+{
+  "name": "foton",
+  "version": "1.0.0",
+  "description": "Teste for Fullstack developer @Foton",
+  "main": "index.js",
+  "scripts": {
+    "test": "env NODE_ENV=test mocha ./server/__specs__/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Veberb/Foton.git"
+  },
+  "author": "Lucas Veber de Brida",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Veberb/Foton/issues"
+  },
+  "homepage": "https://github.com/Veberb/Foton#readme",
+  "dependencies": {
+    "eslint": "^6.3.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^6.2.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "1.18.2"
+  }
+}
