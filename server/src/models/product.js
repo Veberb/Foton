@@ -1,5 +1,5 @@
 const mongoose = require(mongoose);
-const Enum = require('../../util/enum/Enum');
+const Enum = require('../util/enum/Enum');
 
 exports.productStatus = new Enum(['ACTIVE', 'INACTIVE', 'DELETED']);
 

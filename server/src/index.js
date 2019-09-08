@@ -5,6 +5,9 @@ const glob = require('glob');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const config = require('./config');
+const { ApolloServer } = require('apollo-server-express');
+const schema = require('./schema');
+const resolvers = require('./resolvers');
 const app = express();
 
 async function start() {
@@ -30,27 +33,9 @@ async function start() {
   db.on('error', () => {
     throw new Error(`Unable to connect to database at ${config.db}`);
   });
-
-  // Load Mongoose Models
-  const models = glob.sync(`${config.path}/**/*Model.js`);
-  models.forEach(modelPath => {
-    require(`${modelPath}`);
-  });
-
-  // Load APIs
-  const apis = glob.sync(`${config.path}/**/*Api.js`);
-  apis.forEach(apiPath => {
-    require(`${apiPath}`)(app);
-  });
-
-  // Error handling
-  //eslint-disable-next-line
-  app.use((err, req, res, next) => {
-    const error = Boom.isBoom(err) ? err : Boom.boomify(err);
-    res
-      .status(error.output.statusCode)
-      .json({ message: error.message, error: error.output.payload.error });
-  });
+  console.log(resolvers);
+  const server = new ApolloServer({ typeDefs: schema, resolvers });
+  server.applyMiddleware({ app });
 
   // Listen the server
   app.listen(config.port, config.host);
