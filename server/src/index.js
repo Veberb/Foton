@@ -1,7 +1,5 @@
 const express = require('express');
-const Boom = require('boom');
 const morgan = require('morgan');
-const glob = require('glob');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const config = require('./config');
@@ -33,7 +31,6 @@ async function start() {
   db.on('error', () => {
     throw new Error(`Unable to connect to database at ${config.db}`);
   });
-  console.log(resolvers);
   const server = new ApolloServer({ typeDefs: schema, resolvers });
   server.applyMiddleware({ app });
 
