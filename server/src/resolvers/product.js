@@ -1,4 +1,4 @@
-const ProductModel = require('../models/product');
+const { ProductModel } = require('../models');
 
 const Query = {
   listProducts: async (_, { limit, page }) => {
