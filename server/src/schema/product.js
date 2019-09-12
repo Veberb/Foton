@@ -16,7 +16,6 @@ module.exports = gql`
   }
 
   type Query {
-    hello: String
     listProducts(page: Int!, limit: Int!): [Product]
     getProduct(id: ID!): Product
   }
