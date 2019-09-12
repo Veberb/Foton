@@ -1,5 +1,4 @@
 const path = require('path');
-const _ = require('lodash');
 
 const env = process.env.NODE_ENV;
 const dev = env === 'development';
@@ -30,4 +29,4 @@ const DEFAULT_ENV_CONFIG = {
   },
 };
 
-module.exports = _.merge({}, DEFAULT_ENV_CONFIG);
+module.exports = Object.assign({}, DEFAULT_ENV_CONFIG);

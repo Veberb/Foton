@@ -7,6 +7,10 @@ module.exports = gql`
     password: String
   }
 
+  extend type Query {
+    login(login: String!, password: String!): User
+  }
+
   extend type Mutation {
     addUser(login: String!, password: String!): User
   }
