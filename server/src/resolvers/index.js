@@ -1,7 +1,4 @@
 const productResolver = require('./product');
+const userResolver = require('./user');
 
-module.exports = [productResolver];
-
-/*module.exports = {
-  Query: { ...productResolver.Query },
-};*/
+module.exports = [productResolver, userResolver];

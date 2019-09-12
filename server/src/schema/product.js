@@ -15,12 +15,12 @@ module.exports = gql`
     status: Status
   }
 
-  type Query {
+  extend type Query {
     listProducts(page: Int!, limit: Int!): [Product]
     getProduct(id: ID!): Product
   }
 
-  type Mutation {
+  extend type Mutation {
     addProduct(
       name: String!
       description: String!
