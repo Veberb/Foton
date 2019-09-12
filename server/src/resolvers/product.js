@@ -7,6 +7,9 @@ const Query = {
       .skip((page - 1) * limit)
       .limit(limit);
   },
+  getProduct: async (_, { id }) => {
+    return ProductModel.findById(id);
+  },
 };
 
 const Mutation = {

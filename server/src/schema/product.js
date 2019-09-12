@@ -7,11 +7,6 @@ module.exports = gql`
     DELETED
   }
 
-  type Query {
-    hello: String
-    listProducts(page: Int!, limit: Int!): [Product]
-  }
-
   type Product {
     id: String
     name: String
@@ -19,6 +14,13 @@ module.exports = gql`
     quantity: Int
     status: Status
   }
+
+  type Query {
+    hello: String
+    listProducts(page: Int!, limit: Int!): [Product]
+    getProduct(id: ID!): Product
+  }
+
   type Mutation {
     addProduct(
       name: String!
