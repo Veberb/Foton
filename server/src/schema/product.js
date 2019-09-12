@@ -27,5 +27,13 @@ module.exports = gql`
       quantity: Int
       status: Status
     ): Product
+
+    updateProduct(
+      id: ID!
+      name: String
+      description: String
+      quantity: Int
+      status: Status
+    ): Product
   }
 `;
