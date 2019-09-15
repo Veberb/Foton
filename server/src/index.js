@@ -7,6 +7,7 @@ const { ApolloServer } = require('apollo-server-express');
 const schema = require('./schema');
 const resolvers = require('./resolvers');
 const app = express();
+const { verifyToken } = require('./middleware/authHelper');
 
 async function start() {
   app.use(cors());
@@ -31,7 +32,16 @@ async function start() {
   db.on('error', () => {
     throw new Error(`Unable to connect to database at ${config.db}`);
   });
-  const server = new ApolloServer({ typeDefs: schema, resolvers });
+  const server = new ApolloServer({
+    typeDefs: schema,
+    resolvers,
+    context: ({ req }) => {
+      const token = req.headers['foton-token'] || '';
+
+      if (token) verifyToken({ req, token });
+      return { authUser: req.authUser };
+    },
+  });
   server.applyMiddleware({ app });
 
   // Listen the server

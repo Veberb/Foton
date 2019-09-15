@@ -8,7 +8,7 @@ module.exports = gql`
   }
 
   extend type Query {
-    login(login: String!, password: String!): User
+    login(login: String!, password: String!): String
   }
 
   extend type Mutation {

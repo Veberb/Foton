@@ -1,30 +1,33 @@
 const { ProductModel } = require('../models');
+const { authenticated } = require('../middleware/authHelper');
 
 const Query = {
-  listProducts: async (_, { limit, page }) => {
+  listProducts: authenticated((parent, { limit, page }) => {
     return ProductModel.find({})
       .skip((page - 1) * limit)
       .limit(limit);
-  },
-  getProduct: async (_, { id }) => {
+  }),
+  getProduct: authenticated((parent, { id }) => {
     return ProductModel.findById(id);
-  },
+  }),
 };
 
 const Mutation = {
-  addProduct: async (_, args) => {
+  addProduct: authenticated((parent, args) => {
     const product = new ProductModel(args);
     return product.save();
-  },
-  updateProduct: async (_, { id, name, description, quantity, status }) => {
-    const $set = {};
-    if (name) $set.name = name;
-    if (description) $set.description = description;
-    if (quantity) $set.quantity = quantity;
-    if (status) $set.status = status;
+  }),
+  updateProduct: authenticated(
+    (parent, { id, name, description, quantity, status }) => {
+      const $set = {};
+      if (name) $set.name = name;
+      if (description) $set.description = description;
+      if (quantity) $set.quantity = quantity;
+      if (status) $set.status = status;
 
-    return ProductModel.findByIdAndUpdate(id, { $set }, { new: true });
-  },
+      return ProductModel.findByIdAndUpdate(id, { $set }, { new: true });
+    }
+  ),
 };
 
 module.exports = {
