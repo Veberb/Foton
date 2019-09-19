@@ -6,8 +6,12 @@ const { UserModel } = require('../models');
 const jsonWebToken = require('jsonwebtoken');
 const { jwt } = require('../config');
 
-const Query = {
-  login: async (_, { login, password }) => {
+const Mutation = {
+  addUser: async (_, args) => {
+    const user = new UserModel(args);
+    return user.save();
+  },
+  signIn: async (_, { authentication: { login, password } }) => {
     const user = await UserModel.findOne({ login });
 
     if (!user) throw new UserInputError('Login not found :( ');
@@ -21,11 +25,4 @@ const Query = {
   },
 };
 
-const Mutation = {
-  addUser: async (_, args) => {
-    const user = new UserModel(args);
-    return user.save();
-  },
-};
-
-module.exports = { Query, Mutation };
+module.exports = { Mutation };

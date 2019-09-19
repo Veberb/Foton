@@ -1,112 +1,79 @@
 import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-
-import { MonoText } from '../components/StyledText';
+import { Button, Input } from 'react-native-elements';
+import client, { authMutation } from '../services/apollo/';
+import { setToken, getToken } from '../services/auth';
 
 export default function HomeScreen() {
+  const [state, setState] = useState({
+    login: 'veberb',
+    password: 'joao',
+  });
+
+  const inputHandler = (field, value) =>
+    setState(newState => ({ ...newState, [field]: value }));
+
+  const signIn = async () => {
+    try {
+      const { data } = await client.mutate({
+        mutation: authMutation.SIGN_IN,
+        variables: { authentication: { ...state } },
+      });
+    } catch (err) {
+      //Adicionar tostr dps
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
-          />
-        </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-
-          <Text style={styles.getStartedText}>Get started by opening</Text>
-
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
-
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
-          </Text>
-        </View>
-
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <View style={styles.welcomeContainer}>
+        <Image
+          source={require('../assets/images/foton.png')}
+          style={styles.welcomeImage}
+        />
       </View>
-    </View>
+
+      <View style={styles.getStartedContainer}>
+        <Input
+          label="Login"
+          value={state.login}
+          onChangeText={value => inputHandler('login', value)}
+          placeholder="email@address.com"
+        />
+        <Input
+          label="Password"
+          value={state.password}
+          onChangeText={value => inputHandler('password', value)}
+          secureTextEntry={true}
+          placeholder="Password"
+        />
+      </View>
+
+      <View style={styles.helpContainer}>
+        <Button title="Sign in" onPress={signIn} buttonStyle={{ width: 100 }} />
+      </View>
+
+      <View style={styles.helpContainer}>
+        <Text style={styles.helpLinkText}>Create Account</Text>
+      </View>
+    </ScrollView>
   );
 }
 
 HomeScreen.navigationOptions = {
   header: null,
 };
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
 
 const styles = StyleSheet.create({
   container: {

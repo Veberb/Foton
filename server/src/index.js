@@ -10,7 +10,7 @@ const app = express();
 const { verifyToken } = require('./middleware/authHelper');
 
 async function start() {
-  app.use(cors());
+  app.use(cors('*'));
 
   // Enable api usage logging
   if (config.dev) {
