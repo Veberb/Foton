@@ -9,12 +9,12 @@ import {
   View,
 } from 'react-native';
 import { Button, Input } from 'react-native-elements';
-import client, { authMutation } from '../services/apollo/';
+import client, { authMutation } from '../services/apollo';
 import { setToken, getToken } from '../services/auth';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
   const [state, setState] = useState({
-    login: 'veberb',
+    login: 'DALE DEU CERTO',
     password: 'joao',
   });
 
@@ -65,14 +65,7 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <View style={styles.helpContainer}>
-        <Text
-          style={styles.helpLinkText}
-          onPress={() => {
-            navigation.navigate('Register');
-          }}
-        >
-          Create Account
-        </Text>
+        <Text style={styles.helpLinkText}>Create Account</Text>
       </View>
     </ScrollView>
   );
