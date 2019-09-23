@@ -11,11 +11,15 @@ import {
 import { Button, Input } from 'react-native-elements';
 import client, { authMutation } from '../services/apollo';
 import { setToken, getToken } from '../services/auth';
+import validate from '../validation';
+import * as yup from 'yup';
+import Toast from 'react-native-root-toast';
 
 export default function HomeScreen() {
   const [state, setState] = useState({
     login: 'DALE DEU CERTO',
     password: 'joao',
+    confirmPassword: 'lucas',
   });
 
   const inputHandler = (field, value) =>
@@ -23,12 +27,29 @@ export default function HomeScreen() {
 
   const signIn = async () => {
     try {
+      await validate({
+        shape: {
+          login: yup.string().required(),
+          password: yup
+            .string()
+            .required()
+            .min(3),
+          confirmPassword: yup
+            .string()
+            .required()
+            .test('passwords-match', 'Passwords must match', function(value) {
+              return this.parent.password === value;
+            }),
+        },
+        state,
+      });
+
       const { data } = await client.mutate({
         mutation: authMutation.SIGN_IN,
         variables: { authentication: { ...state } },
       });
     } catch (err) {
-      //Adicionar tostr dps
+      Toast.show(err['message'], { duration: 1500, backgroundColor: 'red' });
     }
   };
 
@@ -58,14 +79,21 @@ export default function HomeScreen() {
           secureTextEntry={true}
           placeholder="Password"
         />
+        <Input
+          label="Confirm Password"
+          value={state.confirmPassword}
+          onChangeText={value => inputHandler('confirmPassword', value)}
+          secureTextEntry={true}
+          placeholder="Confirm Password"
+        />
       </View>
 
       <View style={styles.helpContainer}>
-        <Button title="Sign in" onPress={signIn} buttonStyle={{ width: 100 }} />
-      </View>
-
-      <View style={styles.helpContainer}>
-        <Text style={styles.helpLinkText}>Create Account</Text>
+        <Button
+          title="Register"
+          onPress={signIn}
+          buttonStyle={{ width: 100 }}
+        />
       </View>
     </ScrollView>
   );
