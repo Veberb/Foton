@@ -17,9 +17,9 @@ import Toast from 'react-native-root-toast';
 
 export default function HomeScreen() {
   const [state, setState] = useState({
-    login: 'DALE DEU CERTO',
+    login: 'vveber',
     password: 'joao',
-    confirmPassword: 'lucas',
+    confirmPassword: 'joao',
   });
 
   const inputHandler = (field, value) =>
@@ -43,10 +43,10 @@ export default function HomeScreen() {
         },
         state,
       });
-
+      const newUser = { login: state.login, password: state.password };
       const { data } = await client.mutate({
-        mutation: authMutation.SIGN_IN,
-        variables: { authentication: { ...state } },
+        mutation: authMutation.REGISTER,
+        variables: { newUser },
       });
     } catch (err) {
       Toast.show(err['message'], { duration: 1500, backgroundColor: 'red' });

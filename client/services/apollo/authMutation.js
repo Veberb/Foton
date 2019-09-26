@@ -6,4 +6,12 @@ const SIGN_IN = gql`
   }
 `;
 
-export default { SIGN_IN };
+const REGISTER = gql`
+  mutation addUser($newUser: SignIn) {
+    addUser(newUser: $newUser) {
+      login
+    }
+  }
+`;
+
+export default { SIGN_IN, REGISTER };
