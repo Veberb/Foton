@@ -15,8 +15,14 @@ module.exports = gql`
     status: Status
   }
 
+  input ListQuery {
+    page: Int!
+    limit: Int
+    search: String
+  }
+
   extend type Query {
-    listProducts(page: Int!, limit: Int!): [Product]
+    listProducts(listQuery: ListQuery): [Product]
     getProduct(id: ID!): Product
   }
 

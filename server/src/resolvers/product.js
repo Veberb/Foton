@@ -2,11 +2,13 @@ const { ProductModel } = require('../models');
 const { authenticated } = require('../middleware/authHelper');
 
 const Query = {
-  listProducts: authenticated((parent, { limit, page }) => {
-    return ProductModel.find({})
-      .skip((page - 1) * limit)
-      .limit(limit);
-  }),
+  listProducts: authenticated(
+    (parent, { listQuery: { limit = 10, page = 1 } }) => {
+      return ProductModel.find({})
+        .skip((page - 1) * limit)
+        .limit(limit);
+    }
+  ),
   getProduct: authenticated((parent, { id }) => {
     return ProductModel.findById(id);
   }),
