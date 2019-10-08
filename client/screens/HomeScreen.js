@@ -27,6 +27,8 @@ export default function HomeScreen({ navigation }) {
         mutation: authMutation.SIGN_IN,
         variables: { authentication: { ...state } },
       });
+      setToken(data.signIn);
+      navigation.navigate('ProductList');
     } catch (err) {
       //Adicionar tostr dps
     }
