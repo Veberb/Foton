@@ -3,8 +3,11 @@ const { authenticated } = require('../middleware/authHelper');
 
 const Query = {
   listProducts: authenticated(
-    (parent, { listQuery: { limit = 10, page = 1 } }) => {
-      return ProductModel.find({})
+    (parent, { listQuery: { limit = 10, page = 1, search } }) => {
+      const query = {};
+      if (search) query.search = { $regex: search, $options: 'i' };
+
+      return ProductModel.find(query)
         .skip((page - 1) * limit)
         .limit(limit);
     }

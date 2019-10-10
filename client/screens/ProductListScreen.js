@@ -2,8 +2,8 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 import {
   Image,
-  Platform,
-  ScrollView,
+  Text,
+  TouchableHighlight,
   StyleSheet,
   ActivityIndicator,
   FlatList,
@@ -16,35 +16,59 @@ import * as yup from 'yup';
 import Toast from 'react-native-root-toast';
 import ListSeparator from '../components/ListSeparator';
 
-import { ListItem, List, Button } from 'react-native-elements';
+import { ListItem, SearchBar, List, Button } from 'react-native-elements';
 
 export default function HomeScreen() {
   const [state, setState] = useState({
     items: [],
     page: 1,
   });
+  const [search, setSearch] = useState('');
+  const [firstLoading, setFirstLoading] = useState(true);
 
   const getList = async () => {
-    if (state.loading) return;
+    console.log('oi fui chamado');
+    const { page } = state;
+    const { data } = await client.query({
+      query: productQuery.LIST,
+      variables: { listQuery: { page, search } },
+    });
 
-    setTimeout(async () => {
-      const { data } = await client.query({
-        query: productQuery.LIST,
-        variables: { listQuery: { page: state.page } },
-      });
+    console.log(data);
 
-      setState({
-        items: [...state.items, ...data.listProducts],
-        page: state.page + 1,
-      });
-    }, 1500);
+    setState(old => ({
+      ...old,
+      items:
+        page === 1
+          ? [...data.listProducts]
+          : [...state.items, ...data.listProducts],
+      page: state.page + 1,
+    }));
+  };
+  const [debouceTimeOut, setDebouceTimeOut] = useState();
+  const debounce = () => {
+    clearTimeout(debouceTimeOut);
+    setDebouceTimeOut(
+      setTimeout(() => {
+        setState(old => ({ ...old, page: 1 }));
+        getList();
+      }, 1000)
+    );
   };
 
   useEffect(() => {
-    getList();
+    if (firstLoading) return;
+
+    debounce(search);
+  }, [search]);
+
+  useEffect(() => {
+    getList().then(() => {
+      setFirstLoading(false);
+    });
   }, []);
 
-  renderItem = ({ item }) => (
+  const renderItem = ({ item }) => (
     <ListItem
       roundAvatar
       title={`${item.name}`}
@@ -58,7 +82,7 @@ export default function HomeScreen() {
     />
   );
 
-  renderFooter = () => (
+  const renderFooter = () => (
     <View
       style={{
         paddingVertical: 20,
@@ -70,104 +94,61 @@ export default function HomeScreen() {
     </View>
   );
 
+  const renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder="Search name"
+        lightTheme
+        round
+        containerStyle={{ backgroundColor: '#fff' }}
+        onChangeText={value => setSearch(value)}
+        value={search}
+      />
+    );
+  };
+
   return (
-    <FlatList
-      data={state.items}
-      renderItem={renderItem}
-      ItemSeparatorComponent={ListSeparator}
-      keyExtractor={item => item.id}
-      ListFooterComponent={renderFooter}
-      onEndReachedThreshold={0.1}
-      onEndReached={getList}
-    />
+    <View>
+      <FlatList
+        data={state.items}
+        renderItem={renderItem}
+        ItemSeparatorComponent={ListSeparator}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
+        onEndReachedThreshold={0.1}
+        onEndReached={getList}
+      />
+      <TouchableHighlight
+        style={styles.addButton}
+        underlayColor="#ff7043"
+        onPress={() => {}}
+      >
+        <Text style={{ fontSize: 25, color: 'white' }}>+</Text>
+      </TouchableHighlight>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    //paddingTop: 30,
-  },
-  welcomeContainer: {
+  addButton: {
+    backgroundColor: '#ff5722',
+    borderColor: '#ff5722',
+    borderWidth: 1,
+    height: 50,
+    width: 50,
+    borderRadius: 50 / 2,
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
+    justifyContent: 'center',
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+    bottom: 20,
+    right: 20,
+    shadowColor: '#000000',
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 1,
+      width: 0,
+    },
   },
 });
