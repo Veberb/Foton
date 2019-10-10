@@ -7,8 +7,8 @@ const jsonWebToken = require('jsonwebtoken');
 const { jwt } = require('../config');
 
 const Mutation = {
-  addUser: async (_, args) => {
-    const user = new UserModel(args);
+  addUser: async (_, { newUser }) => {
+    const user = new UserModel(newUser);
     return user.save();
   },
   signIn: async (_, { authentication: { login, password } }) => {

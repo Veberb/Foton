@@ -43,10 +43,15 @@ export default function HomeScreen() {
         },
         state,
       });
-      const newUser = { login: state.login, password: state.password };
       const { data } = await client.mutate({
         mutation: authMutation.REGISTER,
-        variables: { newUser },
+        variables: {
+          newUser: { login: state.login, password: state.password },
+        },
+      });
+      Toast.show('Usuário cadastrado :) ', {
+        duration: 1500,
+        backgroundColor: 'green',
       });
     } catch (err) {
       Toast.show(err['message'], { duration: 1500, backgroundColor: 'red' });
