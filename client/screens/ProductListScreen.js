@@ -1,7 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 import {
-  Image,
+  SafeAreaView,
   Text,
   TouchableHighlight,
   StyleSheet,
@@ -34,8 +34,6 @@ export default function HomeScreen() {
       variables: { listQuery: { page, search } },
     });
 
-    console.log(data);
-
     setState(old => ({
       ...old,
       items:
@@ -45,6 +43,7 @@ export default function HomeScreen() {
       page: state.page + 1,
     }));
   };
+
   const [debouceTimeOut, setDebouceTimeOut] = useState();
   const debounce = () => {
     clearTimeout(debouceTimeOut);
@@ -101,20 +100,27 @@ export default function HomeScreen() {
         lightTheme
         round
         containerStyle={{ backgroundColor: '#fff' }}
-        onChangeText={value => setSearch(value)}
+        onChangeText={setSearch}
         value={search}
       />
     );
   };
 
   return (
-    <View>
+    <SafeAreaView style={styles.container}>
+      <SearchBar
+        placeholder="Search name"
+        lightTheme
+        round
+        containerStyle={{ backgroundColor: '#fff' }}
+        onChangeText={setSearch}
+        value={search}
+      />
       <FlatList
         data={state.items}
         renderItem={renderItem}
         ItemSeparatorComponent={ListSeparator}
         keyExtractor={item => item.id}
-        ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
         onEndReachedThreshold={0.1}
         onEndReached={getList}
@@ -126,11 +132,15 @@ export default function HomeScreen() {
       >
         <Text style={{ fontSize: 25, color: 'white' }}>+</Text>
       </TouchableHighlight>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   addButton: {
     backgroundColor: '#ff5722',
     borderColor: '#ff5722',

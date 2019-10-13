@@ -5,7 +5,7 @@ const Query = {
   listProducts: authenticated(
     (parent, { listQuery: { limit = 10, page = 1, search } }) => {
       const query = {};
-      if (search) query.search = { $regex: search, $options: 'i' };
+      if (search) query.name = { $regex: search, $options: 'i' };
 
       return ProductModel.find(query)
         .skip((page - 1) * limit)
