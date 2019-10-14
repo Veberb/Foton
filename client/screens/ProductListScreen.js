@@ -10,15 +10,11 @@ import {
   View,
 } from 'react-native';
 import client, { productQuery } from '../services/apollo';
-import { setToken, getToken } from '../services/auth';
-import validate from '../validation';
-import * as yup from 'yup';
-import Toast from 'react-native-root-toast';
 import ListSeparator from '../components/ListSeparator';
 
-import { ListItem, SearchBar, List, Button } from 'react-native-elements';
+import { ListItem, SearchBar } from 'react-native-elements';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [state, setState] = useState({
     items: [],
     page: 1,
@@ -27,7 +23,6 @@ export default function HomeScreen() {
   const [firstLoading, setFirstLoading] = useState(true);
 
   const getList = async () => {
-    console.log('oi fui chamado');
     const { page } = state;
     const { data } = await client.query({
       query: productQuery.LIST,
@@ -128,7 +123,13 @@ export default function HomeScreen() {
       <TouchableHighlight
         style={styles.addButton}
         underlayColor="#ff7043"
-        onPress={() => {}}
+        onPress={() => {
+          console.log(
+            'POASKPOSAKOPSAOKPSAKOPASKOPASKOPASKOPKOSPAA',
+            navigation
+          );
+          navigation.navigate('Product');
+        }}
       >
         <Text style={{ fontSize: 25, color: 'white' }}>+</Text>
       </TouchableHighlight>

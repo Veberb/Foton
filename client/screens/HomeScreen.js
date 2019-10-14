@@ -28,9 +28,9 @@ export default function HomeScreen({ navigation }) {
         variables: { authentication: { ...state } },
       });
       setToken(data.signIn);
-      navigation.navigate('ProductList');
+      navigation.navigate('Product');
     } catch (err) {
-      //Adicionar tostr dps
+      Toast.show(err['message'], { duration: 1500, backgroundColor: 'red' });
     }
   };
 
@@ -70,6 +70,7 @@ export default function HomeScreen({ navigation }) {
         <Text
           style={styles.helpLinkText}
           onPress={() => {
+            console.log(navigation);
             navigation.navigate('Register');
           }}
         >
