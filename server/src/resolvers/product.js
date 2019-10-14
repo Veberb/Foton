@@ -9,7 +9,8 @@ const Query = {
 
       return ProductModel.find(query)
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .sort({ createdAt: -1 });
     }
   ),
   getProduct: authenticated((parent, { id }) => {
@@ -18,8 +19,8 @@ const Query = {
 };
 
 const Mutation = {
-  addProduct: authenticated((parent, args) => {
-    const product = new ProductModel(args);
+  addProduct: authenticated((parent, { newProduct }) => {
+    const product = new ProductModel({ ...newProduct });
     return product.save();
   }),
   updateProduct: authenticated(

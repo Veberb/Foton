@@ -21,18 +21,20 @@ module.exports = gql`
     search: String
   }
 
+  input FormProduct {
+    name: String
+    description: String
+    quantity: Int
+    status: Status
+  }
+
   extend type Query {
     listProducts(listQuery: ListQuery): [Product]
     getProduct(id: ID!): Product
   }
 
   extend type Mutation {
-    addProduct(
-      name: String!
-      description: String!
-      quantity: Int
-      status: Status
-    ): Product
+    addProduct(newProduct: FormProduct): Product
 
     updateProduct(
       id: ID!

@@ -11,5 +11,6 @@ const client = new ApolloClient({
 
 export { default as authMutation } from './authMutation';
 export { default as productQuery } from './productQuery';
+export { default as productMutation } from './productMutation';
 
 export default client;
