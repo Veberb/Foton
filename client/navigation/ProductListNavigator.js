@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 
@@ -9,11 +9,14 @@ const config = Platform.select({
 });
 const ProductListNavigator = createStackNavigator(
   {
-    ProductList: ProductListScreen,
+    ProductList: {
+      screen: ProductListScreen,
+      navigationOptions: () => ({
+        title: `Prodct List`,
+      }),
+    },
   },
   config
 );
-
-ProductListNavigator.path = '';
 
 export default ProductListNavigator;
