@@ -22,6 +22,7 @@ module.exports = gql`
   }
 
   input FormProduct {
+    id: String
     name: String
     description: String
     quantity: Int
@@ -30,18 +31,11 @@ module.exports = gql`
 
   extend type Query {
     listProducts(listQuery: ListQuery): [Product]
-    getProduct(id: ID!): Product
+    getProduct(id: String): Product
   }
 
   extend type Mutation {
     addProduct(newProduct: FormProduct): Product
-
-    updateProduct(
-      id: ID!
-      name: String
-      description: String
-      quantity: Int
-      status: Status
-    ): Product
+    updateProduct(newProduct: FormProduct): Product
   }
 `;

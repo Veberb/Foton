@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextInput,
   Platform,
@@ -9,7 +9,7 @@ import {
   Picker,
 } from 'react-native';
 import { Button, Input, Header } from 'react-native-elements';
-import client, { productMutation } from '../services/apollo';
+import client, { productMutation, productQuery } from '../services/apollo';
 import validate from '../validation';
 import * as yup from 'yup';
 import Toast from 'react-native-root-toast';
@@ -21,6 +21,12 @@ export default function HomeScreen({ navigation }) {
     description: '',
     quantity: 0,
     status: 'ACTIVE',
+  });
+
+  const [action, setAction] = useState({
+    mutation: productMutation.CREATE,
+    message: 'Product Created',
+    button: 'Create',
   });
 
   const inputHandler = (field, value) =>
@@ -42,13 +48,14 @@ export default function HomeScreen({ navigation }) {
         },
         state,
       });
+      console.log(action.mutation);
       const { data } = await client.mutate({
-        mutation: productMutation.CREATE,
+        mutation: action.mutation,
         variables: {
           newProduct: { ...state },
         },
       });
-      Toast.show('Produto cadastrado :) ', {
+      Toast.show(action.message, {
         duration: 1500,
         backgroundColor: 'green',
       });
@@ -57,6 +64,27 @@ export default function HomeScreen({ navigation }) {
       Toast.show(err['message'], { duration: 1500, backgroundColor: 'red' });
     }
   };
+
+  const getProductById = async () => {
+    const {
+      data: { getProduct },
+    } = await client.query({
+      query: productQuery.GET,
+      variables: { id: navigation.getParam('id') },
+      fetchPolicy: 'no-cache',
+    });
+    setAction({
+      mutation: productMutation.UPDATE,
+      message: 'Product Updated',
+      button: 'Update',
+    });
+    delete getProduct.__typename;
+    setState({ ...getProduct });
+  };
+
+  useEffect(() => {
+    if (navigation.getParam('id')) getProductById();
+  }, []);
 
   return (
     <ScrollView
@@ -101,7 +129,7 @@ export default function HomeScreen({ navigation }) {
 
       <View style={styles.helpContainer}>
         <Button
-          title="Register"
+          title={action.button}
           onPress={submit}
           buttonStyle={{ width: 100 }}
         />

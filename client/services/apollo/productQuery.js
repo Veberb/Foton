@@ -11,4 +11,16 @@ const LIST = gql`
   }
 `;
 
-export default { LIST };
+const GET = gql`
+  query listProducts($id: String) {
+    getProduct(id: $id) {
+      id
+      name
+      quantity
+      status
+      description
+    }
+  }
+`;
+
+export default { LIST, GET };

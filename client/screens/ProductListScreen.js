@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import client, { productQuery } from '../services/apollo';
 import ListSeparator from '../components/ListSeparator';
-import { NavigationEvents } from 'react-navigation';
 
 import { ListItem, SearchBar } from 'react-native-elements';
 
@@ -21,18 +20,16 @@ export default function ProductListScreen({ navigation }) {
   const hasMore = useRef(true);
   const [isFetching, setFetching] = useState(false);
   const [search, setSearch] = useState('');
-  const [firstLoading, setFirstLoading] = useState(true);
 
   const getList = useCallback(async () => {
-    console.log(hasMore.current);
     if (!hasMore.current) return;
     setFetching(true);
 
-    console.log(page, search);
     const currentPage = page.current;
     const { data } = await client.query({
       query: productQuery.LIST,
       variables: { listQuery: { page: page.current, search } },
+      fetchPolicy: 'no-cache',
     });
     setState(
       currentPage === 1
@@ -47,7 +44,6 @@ export default function ProductListScreen({ navigation }) {
 
   const timeOutId = useRef();
   const debounce = () => {
-    console.log(state, isFetching);
     timeOutId.current = setTimeout(() => {
       hasMore.current = true;
       page.current = 1;
@@ -61,6 +57,11 @@ export default function ProductListScreen({ navigation }) {
 
   useEffect(() => {
     getList();
+    const getFocus = navigation.addListener('willFocus', () => {
+      hasMore.current = true;
+      page.current = 1;
+      getList();
+    });
   }, []);
 
   const renderItem = ({ item }) => (
@@ -68,7 +69,7 @@ export default function ProductListScreen({ navigation }) {
       roundAvatar
       title={`${item.name}`}
       subtitle={item.status}
-      onPress={() => navigation.navigate('Product', { id: 123 })}
+      onPress={() => navigation.navigate('Product', { id: item.id })}
       badge={{
         value: item.quantity,
         textStyle: { color: 'white' },
@@ -91,22 +92,8 @@ export default function ProductListScreen({ navigation }) {
       </View>
     );
 
-  const renderHeader = () => {
-    return (
-      <SearchBar
-        placeholder="Search name"
-        lightTheme
-        round
-        containerStyle={{ backgroundColor: '#fff' }}
-        onChangeText={setSearch}
-        value={search}
-      />
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* <NavigationEvents onDidFocus={getList} /> */}
       <SearchBar
         placeholder="Search name"
         lightTheme
@@ -128,10 +115,6 @@ export default function ProductListScreen({ navigation }) {
         style={styles.addButton}
         underlayColor="#ff7043"
         onPress={() => {
-          console.log(
-            'POASKPOSAKOPSAOKPSAKOPASKOPASKOPASKOPKOSPAA',
-            navigation
-          );
           navigation.navigate('Product');
         }}
       >

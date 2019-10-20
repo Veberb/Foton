@@ -13,7 +13,7 @@ const Query = {
         .sort({ createdAt: -1 });
     }
   ),
-  getProduct: authenticated((parent, { id }) => {
+  getProduct: authenticated(async (parent, { id }) => {
     return ProductModel.findById(id);
   }),
 };
@@ -24,7 +24,7 @@ const Mutation = {
     return product.save();
   }),
   updateProduct: authenticated(
-    (parent, { id, name, description, quantity, status }) => {
+    (parent, { newProduct: { id, name, description, quantity, status } }) => {
       const $set = {};
       if (name) $set.name = name;
       if (description) $set.description = description;

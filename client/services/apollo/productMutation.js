@@ -8,4 +8,12 @@ const CREATE = gql`
   }
 `;
 
-export default { CREATE };
+const UPDATE = gql`
+  mutation updateProduct($newProduct: FormProduct) {
+    updateProduct(newProduct: $newProduct) {
+      name
+    }
+  }
+`;
+
+export default { CREATE, UPDATE };
