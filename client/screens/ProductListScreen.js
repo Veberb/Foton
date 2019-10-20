@@ -91,6 +91,16 @@ export default function ProductListScreen({ navigation }) {
       </View>
     );
 
+  const ListEmptyView = () => {
+    return (
+      <View>
+        <Text style={styles.center}>
+          Sorry, No Data Present In FlatList... Try Again.
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <SearchBar
@@ -107,6 +117,7 @@ export default function ProductListScreen({ navigation }) {
         ItemSeparatorComponent={ListSeparator}
         keyExtractor={item => item.id}
         ListFooterComponent={renderFooter}
+        ListEmptyComponent={ListEmptyView}
         onEndReachedThreshold={0.1}
         onEndReached={getList}
       />
@@ -117,7 +128,7 @@ export default function ProductListScreen({ navigation }) {
           navigation.navigate('Product');
         }}
       >
-        <Text style={{ fontSize: 25, color: 'white' }}>+</Text>
+        <Text style={styles.plus}>+</Text>
       </TouchableHighlight>
     </SafeAreaView>
   );
@@ -128,6 +139,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  plus: { fontSize: 25, color: 'white' },
+  center: { textAlign: 'center' },
   addButton: {
     backgroundColor: '#ff5722',
     borderColor: '#ff5722',
