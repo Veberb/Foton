@@ -1,15 +1,14 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
-import HomeNavigator from './HomeNavigator';
-import RegisterNavigator from './RegisterNavigator';
-import ProductListNavigator from './ProductListNavigator';
-import ProductNavigator from './ProductNavigator';
+import AuthNavigator from '../navigation/AuthNavigator';
+import ProtectedNavigator from '../navigation/ProtectedNavigator';
 
 export default createAppContainer(
-  createSwitchNavigator({
-    Home: HomeNavigator,
-    Register: RegisterNavigator,
-    ProductList: ProductListNavigator,
-    Product: ProductNavigator,
-  })
+  createSwitchNavigator(
+    {
+      AuthNavigator,
+      ProtectedNavigator,
+    },
+    { initialRouteName: 'AuthNavigator' }
+  )
 );

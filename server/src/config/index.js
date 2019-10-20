@@ -10,7 +10,7 @@ const DEFAULT_ENV_CONFIG = {
   db: process.env.MONGO_PATH || 'mongodb://localhost:27017/foton',
 
   // app serving on
-  host: process.env.HOST || '10.0.0.104',
+  host: process.env.HOST || '10.0.0.106',
   port: process.env.PORT || 8000,
 
   // env

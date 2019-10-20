@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -11,55 +11,56 @@ import {
 } from 'react-native';
 import client, { productQuery } from '../services/apollo';
 import ListSeparator from '../components/ListSeparator';
+import { NavigationEvents } from 'react-navigation';
 
 import { ListItem, SearchBar } from 'react-native-elements';
 
-export default function HomeScreen({ navigation }) {
-  const [state, setState] = useState({
-    items: [],
-    page: 1,
-  });
+export default function ProductListScreen({ navigation }) {
+  const [state, setState] = useState([]);
+  const page = useRef(1);
+  const hasMore = useRef(true);
+  const [isFetching, setFetching] = useState(false);
   const [search, setSearch] = useState('');
   const [firstLoading, setFirstLoading] = useState(true);
 
-  const getList = async () => {
-    const { page } = state;
+  const getList = useCallback(async () => {
+    console.log(hasMore.current);
+    if (!hasMore.current) return;
+    setFetching(true);
+
+    console.log(page, search);
+    const currentPage = page.current;
     const { data } = await client.query({
       query: productQuery.LIST,
-      variables: { listQuery: { page, search } },
+      variables: { listQuery: { page: page.current, search } },
     });
-
-    setState(old => ({
-      ...old,
-      items:
-        page === 1
-          ? [...data.listProducts]
-          : [...state.items, ...data.listProducts],
-      page: state.page + 1,
-    }));
-  };
-
-  const [debouceTimeOut, setDebouceTimeOut] = useState();
-  const debounce = () => {
-    clearTimeout(debouceTimeOut);
-    setDebouceTimeOut(
-      setTimeout(() => {
-        setState(old => ({ ...old, page: 1 }));
-        getList();
-      }, 1000)
+    setState(
+      currentPage === 1
+        ? [...data.listProducts]
+        : [...state, ...data.listProducts]
     );
+    page.current += 1;
+    hasMore.current = data.listProducts.length === 10;
+
+    setFetching(() => false);
+  }, [state]);
+
+  const timeOutId = useRef();
+  const debounce = () => {
+    console.log(state, isFetching);
+    timeOutId.current = setTimeout(() => {
+      hasMore.current = true;
+      page.current = 1;
+      getList();
+    }, 1000);
   };
 
   useEffect(() => {
-    if (firstLoading) return;
-
-    debounce(search);
+    debounce();
   }, [search]);
 
   useEffect(() => {
-    getList().then(() => {
-      setFirstLoading(false);
-    });
+    getList();
   }, []);
 
   const renderItem = ({ item }) => (
@@ -67,6 +68,7 @@ export default function HomeScreen({ navigation }) {
       roundAvatar
       title={`${item.name}`}
       subtitle={item.status}
+      onPress={() => navigation.navigate('Product', { id: 123 })}
       badge={{
         value: item.quantity,
         textStyle: { color: 'white' },
@@ -76,17 +78,18 @@ export default function HomeScreen({ navigation }) {
     />
   );
 
-  const renderFooter = () => (
-    <View
-      style={{
-        paddingVertical: 20,
-        borderTopWidth: 1,
-        borderColor: '#CED0CE',
-      }}
-    >
-      <ActivityIndicator animating size="large" />
-    </View>
-  );
+  const renderFooter = () =>
+    isFetching && (
+      <View
+        style={{
+          paddingVertical: 20,
+          borderTopWidth: 1,
+          borderColor: '#CED0CE',
+        }}
+      >
+        <ActivityIndicator animating size="large" />
+      </View>
+    );
 
   const renderHeader = () => {
     return (
@@ -103,6 +106,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* <NavigationEvents onDidFocus={getList} /> */}
       <SearchBar
         placeholder="Search name"
         lightTheme
@@ -112,7 +116,7 @@ export default function HomeScreen({ navigation }) {
         value={search}
       />
       <FlatList
-        data={state.items}
+        data={state}
         renderItem={renderItem}
         ItemSeparatorComponent={ListSeparator}
         keyExtractor={item => item.id}

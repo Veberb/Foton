@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import client, { authMutation } from '../services/apollo/';
-import { setToken, getToken } from '../services/auth';
+import { setToken } from '../services/auth';
+import Toast from 'react-native-root-toast';
 
 export default function HomeScreen({ navigation }) {
   const [state, setState] = useState({
