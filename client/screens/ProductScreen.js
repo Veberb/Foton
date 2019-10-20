@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  TextInput,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Picker,
-} from 'react-native';
-import { Button, Input, Header } from 'react-native-elements';
+import { ScrollView, StyleSheet, View, Picker } from 'react-native';
+import { Button, Input } from 'react-native-elements';
 import client, { productMutation, productQuery } from '../services/apollo';
 import validate from '../validation';
 import * as yup from 'yup';
 import Toast from 'react-native-root-toast';
 import NumericInput from 'react-native-numeric-input';
 
-export default function HomeScreen({ navigation }) {
+export default function ProductScreen({ navigation }) {
   const [state, setState] = useState({
     name: '',
     description: '',
@@ -48,8 +40,7 @@ export default function HomeScreen({ navigation }) {
         },
         state,
       });
-      console.log(action.mutation);
-      const { data } = await client.mutate({
+      await client.mutate({
         mutation: action.mutation,
         variables: {
           newProduct: { ...state },
