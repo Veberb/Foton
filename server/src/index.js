@@ -22,16 +22,18 @@ async function start() {
   // Enable parsers with larger payloads
   app.use(express.json({ limit: '25mb', type: 'application/json' }));
 
-  // Connect to MongoDB
-  mongoose.connect(config.db, {
-    config: { autoIndex: true },
-    useNewUrlParser: true,
-  });
+  if (process.env.NODE_ENV !== 'test') {
+    // Connect to MongoDB
+    mongoose.connect(config.db, {
+      config: { autoIndex: true },
+      useNewUrlParser: true,
+    });
 
-  const db = mongoose.connection;
-  db.on('error', () => {
-    throw new Error(`Unable to connect to database at ${config.db}`);
-  });
+    const db = mongoose.connection;
+    db.on('error', () => {
+      throw new Error(`Unable to connect to database at ${config.db}`);
+    });
+  }
   const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
