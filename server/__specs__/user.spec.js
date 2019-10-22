@@ -1,7 +1,6 @@
 const MongoMemory = require('mongodb-memory-server').default;
 const mongoose = require('mongoose');
 const { expect } = require('chai');
-const chai = require('chai');
 const request = require('supertest');
 const server = require('../src/');
 
