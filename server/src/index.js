@@ -47,7 +47,7 @@ async function start() {
   server.applyMiddleware({ app });
 
   // Listen the server
-  app.listen(config.port, config.host);
+  app.listen(config.port);
 }
 
 start();
