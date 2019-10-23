@@ -14,8 +14,8 @@ import Toast from 'react-native-root-toast';
 
 export default function HomeScreen({ navigation }) {
   const [state, setState] = useState({
-    login: 'veberb',
-    password: 'joao',
+    login: '',
+    password: '',
   });
 
   const inputHandler = (field, value) =>

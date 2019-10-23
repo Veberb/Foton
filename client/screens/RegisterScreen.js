@@ -8,9 +8,9 @@ import Toast from 'react-native-root-toast';
 
 export default function RegisterScreen({ navigation }) {
   const [state, setState] = useState({
-    login: 'vveber',
-    password: 'joao',
-    confirmPassword: 'joao',
+    login: '',
+    password: '',
+    confirmPassword: '',
   });
 
   const inputHandler = (field, value) =>
