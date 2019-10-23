@@ -56,7 +56,6 @@ describe('User Test', () => {
         },
       })
       .end((err, res) => {
-        console.log();
         expect(res.body.errors[0].message).to.contains('duplicate key');
         done();
       });
@@ -72,7 +71,6 @@ describe('User Test', () => {
       })
       .expect(200)
       .end((err, res) => {
-        console.log(res.body);
         expect(res.body.data).to.have.property('signIn');
         done();
       });

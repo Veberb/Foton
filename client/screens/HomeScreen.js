@@ -70,7 +70,6 @@ export default function HomeScreen({ navigation }) {
         <Text
           style={styles.helpLinkText}
           onPress={() => {
-            console.log(navigation);
             navigation.navigate('Register');
           }}
         >
